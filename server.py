@@ -1,4 +1,6 @@
 import json
+
+
 from flask import Flask,render_template,request,redirect,flash,url_for
 
 
@@ -20,14 +22,25 @@ app.secret_key = 'something_special'
 competitions = loadCompetitions()
 clubs = loadClubs()
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route('/showSummary',methods=['POST'])
 def showSummary():
-    club = [club for club in clubs if club['email'] == request.form['email']][0]
-    return render_template('welcome.html',club=club,competitions=competitions)
+    request_email = request.form["email"]
+    try:
+        club = [club for club in clubs if club['email'] == request_email][0]
+        return render_template('welcome.html',club=club,competitions=competitions)
+    except IndexError:
+        if request_email is "":
+            flash("Sorry, you have to fill in an email.")
+        else:
+            flash("Sorry, that email wasn't found.")
+        return render_template("index.html")
+
 
 
 @app.route('/book/<competition>/<club>')
