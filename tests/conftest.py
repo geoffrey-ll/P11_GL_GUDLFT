@@ -31,3 +31,21 @@ def mock_clubs(mocker):
     ]
     mocked = mocker.patch.object(server, "clubs", test_clubs)
     yield mocked
+
+
+@pytest.fixture
+def mock_competitions(mocker):
+    test_competitions = [
+        {
+            "name": "Test Festival",
+            "date": "2021-11-06 08:00:00",
+            "numberOfPlaces": "18"
+        },
+        {
+            "name": "Test competition",
+            "date": "2019-01-25 13:30:00",
+            "numberOfPlaces": "13"
+        }
+    ]
+    mocked = mocker.patch.object(server, "competitions", test_competitions)
+    yield mocked
