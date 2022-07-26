@@ -43,10 +43,10 @@ def book(competition, club):
 
 @app.route('/purchasePlaces', methods=["POST"])
 def purchasePlaces():
-    print(f"\n\ncompetitionsList in server.py\n{competitions}\n\n")
-    print(f"\n\nrequest in server.py\n{request.form}\n\n")
-    competition = [c for c in competitions if c['name'] == request.form['competition']]
-    print(f"\n\ncompetitionRécup in server.py\n{competition}\n\n")
+    # print(f"\n\ncompetitionsList in server.py\n{competitions}\n\n")
+    # print(f"\n\nrequest in server.py\n{request.form}\n\n")
+    competition = [c for c in competitions if c['name'] == request.form['competition']][0]
+    # print(f"\n\ncompetitionRécup in server.py\n{competition}\n\n")
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
