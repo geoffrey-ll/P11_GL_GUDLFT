@@ -34,7 +34,6 @@ def showSummary():
     request_email = request.form["email"]
     try:
         club = [club for club in clubs if club['email'] == request_email][0]
-        # return redirect(url_for('index'))
         return render_template('welcome.html',club=club,competitions=competitions)
     except IndexError:
         if request_email is "":
