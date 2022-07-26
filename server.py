@@ -1,7 +1,8 @@
 import json
 
 
-from flask import Flask,render_template,request,redirect,flash,url_for
+
+from flask import Flask, render_template, request, redirect, flash, url_for
 
 
 def loadClubs():
@@ -33,14 +34,15 @@ def showSummary():
     request_email = request.form["email"]
     try:
         club = [club for club in clubs if club['email'] == request_email][0]
+        # return redirect(url_for('index'))
         return render_template('welcome.html',club=club,competitions=competitions)
     except IndexError:
         if request_email is "":
             flash("Sorry, you have to fill in an email.")
         else:
             flash("Sorry, that email wasn't found.")
-        return render_template("index.html")
 
+        return redirect(url_for('index'))
 
 
 @app.route('/book/<competition>/<club>')
