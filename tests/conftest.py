@@ -39,12 +39,12 @@ def mock_competitions(mocker):
         {
             "name": "Test Festival",
             "date": "2021-11-06 08:00:00",
-            "numberOfPlaces": "18"
+            "number_of_places": "18"
         },
         {
             "name": "Test competition",
             "date": "2019-01-25 13:30:00",
-            "numberOfPlaces": "13"
+            "number_of_places": "13"
         }
     ]
     mocked = mocker.patch.object(server, "competitions", test_competitions)
