@@ -43,7 +43,7 @@ def show_summary():
         )
 
     except IndexError:
-        if request_email is "":
+        if request_email == "":
             flash("Sorry, you have to fill in an email.")
         else:
             flash("Sorry, that email wasn't found.")
