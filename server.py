@@ -4,6 +4,15 @@ import json
 from flask import Flask, render_template, request, redirect, flash, url_for
 
 
+MESSAGE_ERROR_DISPLAY_BOOK_VIEW = "Something went wrong-please try again"
+MESSAGE_NOT_ENOUGH_POINTS = "You don't have enough points."
+MESSAGE_NOT_POINTS_CLUB = "You have no points to spend."
+MESSAGE_GREAT_BOOKING = "Great-booking complete!"
+MESSAGE_INPUT_PLACES_EMPTY = "Indicate the number of places to book."
+MESSAGE_INPUT_EMAIL_UNKNOW = "Sorry, that email wasn't found."
+MESSAGE_INPUT_EMAIL_EMPTY = "Sorry, you have to fill in an email."
+
+
 def load_clubs():
     with open("clubs.json") as c:
         list_of_clubs = json.load(c)["clubs"]
@@ -34,6 +43,7 @@ def index():
 @app.route("/showSummary", methods=["POST"])
 def show_summary():
     request_email = request.form["email"]
+
     try:
         club = [club for club in clubs if club["email"] == request_email][0]
         return render_template(
@@ -41,12 +51,11 @@ def show_summary():
             club=club,
             competitions=competitions
         )
-
     except IndexError:
         if request_email == "":
-            flash("Sorry, you have to fill in an email.")
+            flash(MESSAGE_INPUT_EMAIL_EMPTY)
         else:
-            flash("Sorry, that email wasn't found.")
+            flash(MESSAGE_INPUT_EMAIL_UNKNOW)
 
         return redirect(url_for("index"))
 
@@ -57,6 +66,7 @@ def book(competition, club):
     found_competition = [
         c for c in competitions if c["name"] == competition
     ][0]
+
     if found_club and found_competition:
         return render_template(
             "booking.html",
@@ -64,7 +74,7 @@ def book(competition, club):
             competition=found_competition
         )
     else:
-        flash("Something went wrong-please try again")
+        flash(MESSAGE_ERROR_DISPLAY_BOOK_VIEW)
         return render_template(
             "welcome.html",
             club=club,
@@ -74,19 +84,42 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchase_places():
+    if request.form["places"] == "":
+        flash(MESSAGE_INPUT_PLACES_EMPTY)
+        return redirect(
+            url_for(
+                "book",
+                competition=request.form["competition"],
+                club=request.form["club"]
+            )
+        )
+
     competition = [
         c for c in competitions if c["name"] == request.form["competition"]
     ][0]
     club = [c for c in clubs if c["name"] == request.form["club"]][0]
     places_required = int(request.form["places"])
-    competition["number_of_places"] = \
+
+    if places_required > int(club["points"]):
+        if int(club["points"]) == 0:
+            flash(MESSAGE_NOT_POINTS_CLUB)
+        else:
+            flash(MESSAGE_NOT_ENOUGH_POINTS)
+        return redirect(
+            url_for(
+                "book",
+                competition=request.form["competition"],
+                club=request.form["club"]
+            )
+        )
+
+    competition["number_of_places"] = str(
         int(competition["number_of_places"]) - places_required
-    flash("Great-booking complete!")
-    return render_template(
-        "welcome.html",
-        club=club,
-        competitions=competitions
     )
+    club["points"] = str(int(club["points"]) - places_required)
+
+    flash(MESSAGE_GREAT_BOOKING)
+    return redirect(url_for("show_summary"), code=307)
 
 
 # TODO: Add route for points display
