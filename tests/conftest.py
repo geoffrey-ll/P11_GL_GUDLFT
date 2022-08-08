@@ -14,19 +14,19 @@ def client():
 def mock_clubs(mocker):
     test_clubs = [
         {
-            "name":"test club 01",
-            "email":"test01@club.com",
-            "points":"7"
+            "name": "test club 01",
+            "email": "test01@club.com",
+            "points": "7"
         },
         {
-            "name":"test club 02",
-            "email":"test02@club.com",
-            "points":"0"
+            "name": "test club 02",
+            "email": "test02@club.com",
+            "points": "0"
         },
         {
-            "name":"test club 03",
-            "email":"test03@club.com",
-            "points":"4"
+            "name": "test club 03",
+            "email": "test03@club.com",
+            "points": "4"
         }
     ]
     mocked = mocker.patch.object(server, "clubs", test_clubs)
