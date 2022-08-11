@@ -1,3 +1,6 @@
+import server
+
+
 def test_message_when_form_is_empty(client, mock_clubs, mock_competitions):
     data_test = {
         "email": mock_clubs[0]["email"],
@@ -11,10 +14,10 @@ def test_message_when_form_is_empty(client, mock_clubs, mock_competitions):
         data=data_test,
         follow_redirects=True
     )
-    expected_value = "Indicate the number of places to book."
+    expected_message = server.MESSAGE_INPUT_PLACES_EMPTY
 
     assert response_purchase.status_code == 200
-    assert expected_value in response_purchase.data.decode()
+    assert expected_message in response_purchase.data.decode()
 
 
 def test_message_when_spend_more_points_have_club(client, mock_clubs, mock_competitions):
@@ -30,10 +33,10 @@ def test_message_when_spend_more_points_have_club(client, mock_clubs, mock_compe
         data=data_test,
         follow_redirects=True
     )
-    expected_value = "You don&#39;t have enough points."
+    expected_message = server.MESSAGE_NOT_ENOUGH_POINTS.replace("'", "&#39;")
 
     assert response_purchase.status_code == 200
-    assert expected_value in response_purchase.data.decode()
+    assert expected_message in response_purchase.data.decode()
 
 
 def test_message_when_club_no_points(client, mock_clubs, mock_competitions):
@@ -49,11 +52,11 @@ def test_message_when_club_no_points(client, mock_clubs, mock_competitions):
         data=data_test,
         follow_redirects=True
     )
-    expected_value = "You have no points to spend."
+    expected_message = server.MESSAGE_NOT_POINTS_CLUB
 
     assert mock_clubs[1]["points"] == "0"
     assert response_purchase.status_code == 200
-    assert expected_value in response_purchase.data.decode()
+    assert expected_message in response_purchase.data.decode()
 
 
 def test_message_confirm_spending_points(client, mock_clubs, mock_competitions):
@@ -76,17 +79,17 @@ def test_message_confirm_spending_points(client, mock_clubs, mock_competitions):
     #     data=data_test,
     #     follow_redirects=True
     # )
-    # expected_value = "Great-booking complete!"
+    # expected_message = "Great-booking complete!"
     # assert response_purchase.status_code == 200
-    # assert expected_value in response_purchase.data.decode()
+    # assert expected_message in response_purchase.data.decode()
 
     response_purchase = client.post(
         "/purchasePlaces",
         data=data_test
     )
     response_summary = client.post("/showSummary", data=data_test)
-    expected_value = "Great-booking complete!"
+    expected_message = server.MESSAGE_GREAT_BOOKING
 
     assert response_purchase.status_code == 307
     assert response_summary.status_code == 200
-    assert expected_value in response_summary.data.decode()
+    assert expected_message in response_summary.data.decode()
