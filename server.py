@@ -1,5 +1,4 @@
 from datetime import datetime
-from time import strftime
 import json
 
 
@@ -9,6 +8,7 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 MESSAGE_ERROR_DISPLAY_BOOK_VIEW = "Something went wrong-please try again."
 MESSAGE_ERROR_INPUT_PLACES = "Incorrect value."
 MESSAGE_ERROR_OVER_12_PLACES_BY_CLUB = "Maximum 12 places by club."
+MESSAGE_ERROR_PAST_COMPETITION = "This competition is past. Booking is not possible."
 MESSAGE_NOT_ENOUGH_POINTS = "You don't have enough points."
 MESSAGE_NOT_ENOUGH_PLACES = "The competition doesn't have enough places."
 MESSAGE_NOT_POINTS_CLUB = "You have no points to spend."
@@ -44,6 +44,10 @@ competitions = load_competitions()
 clubs = load_clubs()
 
 
+def today():
+    return datetime.now().strftime(DATETIME_FORMAT)
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -58,7 +62,8 @@ def show_summary():
         return render_template(
             "welcome.html",
             club=club,
-            competitions=competitions
+            competitions=competitions,
+            today=today()
         )
     except IndexError:
         if request_email == "":
@@ -71,10 +76,20 @@ def show_summary():
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
+
     found_club = [c for c in clubs if c["name"] == club][0]
     found_competition = [
         c for c in competitions if c["name"] == competition
     ][0]
+
+    if found_competition["date"] < today():
+        flash(MESSAGE_ERROR_PAST_COMPETITION)
+        return render_template(
+            "welcome.html",
+            club=club,
+            competitions=competitions,
+            today=today()
+        )
 
     places_still_purchasable = 12
     if found_club["name"] in found_competition["clubs_places"]:
@@ -99,7 +114,8 @@ def book(competition, club):
         return render_template(
             "welcome.html",
             club=club,
-            competitions=competitions
+            competitions=competitions,
+            today=today()
         )
 
 
@@ -115,7 +131,6 @@ def purchase_places():
     ][0]
     club = [c for c in clubs if c["name"] == request.form["club"]][0]
 
-
     places_form_err = False
     try:
         places_required = int(request.form["places"])
@@ -124,13 +139,16 @@ def purchase_places():
         flash(MESSAGE_ERROR_INPUT_PLACES)
         places_required = 0
 
-
+    comp_is_past = False
     zero_points_club = False
     zero_places_comp = False
     over_12_required = False
     over_points_club = False
     over_places_comp = False
     over_12_with_old = False
+    if competition["date"] < today():
+        comp_is_past = True
+        flash(MESSAGE_ERROR_PAST_COMPETITION)
     if int(club["points"]) == 0:
         zero_points_club = True
         flash(MESSAGE_NOT_POINTS_CLUB)
@@ -159,6 +177,7 @@ def purchase_places():
     errors = [
         places_form_empty,
         places_form_err,
+        comp_is_past,
         zero_points_club,
         zero_places_comp,
         over_12_required,
