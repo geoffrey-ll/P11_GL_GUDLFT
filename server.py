@@ -1,3 +1,5 @@
+from datetime import datetime
+from time import strftime
 import json
 
 
@@ -15,6 +17,9 @@ MESSAGE_GREAT_BOOKING = "Great-booking complete!"
 MESSAGE_INPUT_PLACES_EMPTY = "Indicate the number of places to book."
 MESSAGE_INPUT_EMAIL_UNKNOWN = "Sorry, that email wasn't found."
 MESSAGE_INPUT_EMAIL_EMPTY = "Sorry, you have to fill in an email."
+
+
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def load_clubs():

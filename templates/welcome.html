@@ -22,6 +22,7 @@
     <p>Points available: {{ club["points"] }}</p>
     <h3>Competitions:</h3>
     <ul>
+      {{ datetime }}
       {% for comp in competitions %}
         <li>
           {{ comp["name"] }}<br>
