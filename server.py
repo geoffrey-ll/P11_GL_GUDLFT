@@ -14,9 +14,9 @@ MESSAGE_NOT_ENOUGH_PLACES = "The competition doesn't have enough places."
 MESSAGE_NOT_POINTS_CLUB = "You have no points to spend."
 MESSAGE_NOT_PLACES_COMP = "The competition has no places."
 MESSAGE_GREAT_BOOKING = "Great-booking complete!"
-MESSAGE_INPUT_PLACES_EMPTY = "Indicate the number of places to book."
-MESSAGE_INPUT_EMAIL_UNKNOWN = "Sorry, that email wasn't found."
 MESSAGE_INPUT_EMAIL_EMPTY = "Sorry, you have to fill in an email."
+MESSAGE_INPUT_EMAIL_UNKNOWN = "Sorry, that email wasn't found."
+MESSAGE_INPUT_PLACES_EMPTY = "Indicate the number of places to book."
 
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
