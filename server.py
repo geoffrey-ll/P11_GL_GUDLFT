@@ -70,7 +70,6 @@ def show_summary():
             flash(MESSAGE_INPUT_EMAIL_EMPTY)
         else:
             flash(MESSAGE_INPUT_EMAIL_UNKNOWN)
-
         return redirect(url_for("index"))
 
 
