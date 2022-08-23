@@ -5,10 +5,19 @@ import json
 from flask import Flask, render_template, request, redirect, flash, url_for
 
 
+FILE_CLUBS = "clubs.json"
+FILE_COMPETITIONS = "competitions.json"
+
+
 MESSAGE_ERROR_DISPLAY_BOOK_VIEW = "Something went wrong-please try again."
 MESSAGE_ERROR_INPUT_PLACES = "Incorrect value."
 MESSAGE_ERROR_OVER_12_PLACES_BY_CLUB = "Maximum 12 places by club."
-MESSAGE_ERROR_PAST_COMPETITION = "This competition is past. Booking is not possible."
+MESSAGE_ERROR_PAST_COMPETITION = "This competition is past. Booking is not " \
+                                 "possible."
+MESSAGE_NOT_BOOKING_POSSIBLE = "Impossible to booking places.\n" \
+                               "Check points clubs, check number of places " \
+                               "competitions and check number of places " \
+                               "booked by club for this competition (max 12)."
 MESSAGE_NOT_ENOUGH_POINTS = "You don't have enough points."
 MESSAGE_NOT_ENOUGH_PLACES = "The competition doesn't have enough places."
 MESSAGE_NOT_POINTS_CLUB = "You have no points to spend."
@@ -23,29 +32,42 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def load_clubs():
-    with open("clubs.json") as c:
+    print(f"\n\nfile\n{FILE_CLUBS}\n")
+    with open(FILE_CLUBS) as c:
         list_of_clubs = json.load(c)["clubs"]
-        c.close()
-        return list_of_clubs
+        print(f"\n\nlist\n{list_of_clubs}\n")
+    c.close()
+    return list_of_clubs
 
 
 def load_competitions():
-    with open("competitions.json") as comps:
+    print(f"\n\nfile\n{FILE_COMPETITIONS}\n")
+    with open(FILE_COMPETITIONS) as comps:
         list_of_competitions = json.load(comps)["competitions"]
-        comps.close()
-        return list_of_competitions
+        print(f"\n\nliste\n{list_of_competitions}\n")
+    comps.close()
+    return list_of_competitions
 
 
 app = Flask(__name__)
 app.secret_key = "something_special"
 
 
-competitions = load_competitions()
 clubs = load_clubs()
+competitions = load_competitions()
 
 
 def today():
     return datetime.now().strftime(DATETIME_FORMAT)
+
+
+def update_database():
+    with open(FILE_CLUBS, mode="w") as c:
+        json.dump({"clubs": clubs}, c, indent=2)
+    c.close()
+    with open(FILE_COMPETITIONS, mode="w") as comps:
+        json.dump({"competitions": competitions}, comps, indent=2)
+    comps.close()
 
 
 @app.route("/")
@@ -63,7 +85,6 @@ def show_summary():
             "welcome.html",
             club=club,
             competitions=competitions,
-            today=today()
         )
     except IndexError:
         if request_email == "":
@@ -75,20 +96,10 @@ def show_summary():
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
-
     found_club = [c for c in clubs if c["name"] == club][0]
     found_competition = [
         c for c in competitions if c["name"] == competition
     ][0]
-
-    if found_competition["date"] < today():
-        flash(MESSAGE_ERROR_PAST_COMPETITION)
-        return render_template(
-            "welcome.html",
-            club=club,
-            competitions=competitions,
-            today=today()
-        )
 
     places_still_purchasable = 12
     if found_club["name"] in found_competition["clubs_places"]:
@@ -101,20 +112,34 @@ def book(competition, club):
         places_still_purchasable
     )
 
+    comp_or_club_no_found = False
+    comp_is_past = False
+    maxi_is_zero = False
+    if found_club == [] or found_competition == []:
+        comp_or_club_no_found = True
+        flash(MESSAGE_ERROR_DISPLAY_BOOK_VIEW)
+    if found_competition["date"] < today():
+        comp_is_past = True
+        flash(MESSAGE_ERROR_PAST_COMPETITION)
+    if maximum_booking == 0:
+        maxi_is_zero = True
+        flash(MESSAGE_NOT_BOOKING_POSSIBLE)
+
+    errors = [comp_or_club_no_found, comp_is_past, maxi_is_zero]
+    for error in errors:
+        if error is True:
+            return render_template(
+                "welcome.html",
+                club=found_club,
+                competitions=competitions,
+            )
+
     if found_club and found_competition:
         return render_template(
             "booking.html",
             club=found_club,
             competition=found_competition,
             maximum_booking=maximum_booking
-        )
-    else:
-        flash(MESSAGE_ERROR_DISPLAY_BOOK_VIEW)
-        return render_template(
-            "welcome.html",
-            club=club,
-            competitions=competitions,
-            today=today()
         )
 
 
@@ -196,12 +221,13 @@ def purchase_places():
                     club=request.form["club"]
                 )
             )
+
     competition["clubs_places"][club["name"]] = str(total_temp)
     club["points"] = str(int(club["points"]) - places_required)
     competition["number_of_places"] = str(
         int(competition["number_of_places"]) - places_required
     )
-
+    update_database()
     flash(MESSAGE_GREAT_BOOKING)
     return redirect(url_for("show_summary"), code=307)
 

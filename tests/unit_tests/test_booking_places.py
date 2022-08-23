@@ -9,19 +9,19 @@ from .utility_functions import (
 )
 
 
-def test_no_booking_if_points_club_is_zero(client, mock_clubs, mock_competitions):
+def test_no_booking_if_points_club_is_zero(client, clubs, competitions):
     check_club_has_points_and_comp_has_places(
-        mock_clubs[0],
-        mock_competitions[0]
+        clubs[0],
+        competitions[0]
     )
-    check_competition_date_is_no_past(mock_competitions[0])
-    mock_clubs[0]["points"] = "0"
-    del_places_purchased_by_club_testing(mock_clubs[0], mock_competitions[0])
+    check_competition_date_is_no_past(competitions[0])
+    clubs[0]["points"] = "0"
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
         "places": 1
     }
 
@@ -34,23 +34,23 @@ def test_no_booking_if_points_club_is_zero(client, mock_clubs, mock_competitions
 
     assert response_purchase.status_code == 200
     assert expected_message in response_purchase.data.decode()
-    assert mock_clubs[0]["name"] not in mock_competitions[0]["clubs_places"]
+    assert clubs[0]["name"] not in competitions[0]["clubs_places"]
 
 
-def test_no_booking_if_places_comp_is_zero(client, mock_clubs, mock_competitions):
+def test_no_booking_if_places_comp_is_zero(client, clubs, competitions):
     check_club_has_points_and_comp_has_places(
-        mock_clubs[0],
-        mock_competitions[0]
+        clubs[0],
+        competitions[0]
     )
-    check_competition_date_is_no_past(mock_competitions[0])
-    mock_competitions[0]["number_of_places"] = "0"
-    del_places_purchased_by_club_testing(mock_clubs[0], mock_competitions[0])
+    check_competition_date_is_no_past(competitions[0])
+    competitions[0]["number_of_places"] = "0"
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
-        "places": determine_maximum_booking(mock_clubs[0], mock_competitions[0])
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
+        "places": determine_maximum_booking(clubs[0], competitions[0])
     }
 
     response_purchase = client.post(
@@ -64,18 +64,18 @@ def test_no_booking_if_places_comp_is_zero(client, mock_clubs, mock_competitions
     assert expected_message in response_purchase.data.decode()
 
 
-def test_no_booking_if_places_form_over_12(client, mock_clubs, mock_competitions):
-    check_competition_date_is_no_past(mock_competitions[0])
-    if int(mock_clubs[0]["points"]) < 13:
-        mock_clubs[0]["points"] = "13"
-    if int(mock_competitions[0]["number_of_places"]) < 12:
-        mock_competitions[0]["number_of_places"] = "13"
-    del_places_purchased_by_club_testing(mock_clubs[0], mock_competitions[0])
+def test_no_booking_if_places_form_over_12(client, clubs, competitions):
+    check_competition_date_is_no_past(competitions[0])
+    if int(clubs[0]["points"]) < 13:
+        clubs[0]["points"] = "13"
+    if int(competitions[0]["number_of_places"]) < 12:
+        competitions[0]["number_of_places"] = "13"
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
         "places": 13,
     }
 
@@ -84,24 +84,24 @@ def test_no_booking_if_places_form_over_12(client, mock_clubs, mock_competitions
 
     assert response_purchase.status_code == 200
     assert expected_message in response_purchase.data.decode()
-    assert mock_clubs[0]["name"] not in mock_competitions[0]["clubs_places"]
+    assert clubs[0]["name"] not in competitions[0]["clubs_places"]
 
 
-def test_no_booking_if_places_form_over_points_club(client, mock_clubs, mock_competitions):
+def test_no_booking_if_places_form_over_points_club(client, clubs, competitions):
     check_club_has_points_and_comp_has_places(
-        mock_clubs[0],
-        mock_competitions[0]
+        clubs[0],
+        competitions[0]
     )
-    check_competition_date_is_no_past(mock_competitions[0])
-    if int(mock_clubs[0]["points"]) >= 12:
-        mock_clubs[0]["points"] = "1"
-    del_places_purchased_by_club_testing(mock_clubs[0], mock_competitions[0])
+    check_competition_date_is_no_past(competitions[0])
+    if int(clubs[0]["points"]) >= 12:
+        clubs[0]["points"] = "1"
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
-        "places": int(mock_clubs[0]["points"]) + 1
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
+        "places": int(clubs[0]["points"]) + 1
     }
 
     response_purchase = client.post(
@@ -113,25 +113,25 @@ def test_no_booking_if_places_form_over_points_club(client, mock_clubs, mock_com
 
     assert response_purchase.status_code == 200
     assert expected_message in response_purchase.data.decode()
-    assert mock_clubs[0]["name"] not in mock_competitions[0]["clubs_places"]
+    assert clubs[0]["name"] not in competitions[0]["clubs_places"]
 
 
-def test_no_booking_if_places_form_over_places_comp(client, mock_clubs, mock_competitions):
+def test_no_booking_if_places_form_over_places_comp(client, clubs, competitions):
     check_club_has_points_and_comp_has_places(
-        mock_clubs[0],
-        mock_competitions[0]
+        clubs[0],
+        competitions[0]
     )
-    check_competition_date_is_no_past(mock_competitions[0])
-    del_places_purchased_by_club_testing(mock_clubs[0], mock_competitions[0])
+    check_competition_date_is_no_past(competitions[0])
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
-        "places": int(mock_competitions[0]["number_of_places"]) + 1
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
+        "places": int(competitions[0]["number_of_places"]) + 1
     }
-    if int(mock_clubs[0]["points"]) < data_test["places"]:
-        mock_clubs[0]["points"] = data_test["places"]
+    if int(clubs[0]["points"]) < data_test["places"]:
+        clubs[0]["points"] = data_test["places"]
 
     response_purchase = client.post(
         "/purchasePlaces",
@@ -144,23 +144,23 @@ def test_no_booking_if_places_form_over_places_comp(client, mock_clubs, mock_com
     assert expected_message in response_purchase.data.decode()
 
 
-def test_no_booking_if_sum_places_form_and_club_places_over_12(client, mock_clubs, mock_competitions):
-    check_competition_date_is_no_past(mock_competitions[0])
-    if mock_clubs[0]["name"] not in mock_competitions[0]["clubs_places"] \
-            or int(mock_competitions[0]["clubs_places"][mock_clubs[0]["name"]]) > 12:
-        mock_competitions[0]["clubs_places"][mock_clubs[0]["name"]] = "7"
+def test_no_booking_if_sum_places_form_and_club_places_over_12(client, clubs, competitions):
+    check_competition_date_is_no_past(competitions[0])
+    if clubs[0]["name"] not in competitions[0]["clubs_places"] \
+            or int(competitions[0]["clubs_places"][clubs[0]["name"]]) > 12:
+        competitions[0]["clubs_places"][clubs[0]["name"]] = "7"
     places_already_purchase = \
-        mock_competitions[0]["clubs_places"][mock_clubs[0]["name"]]
+        competitions[0]["clubs_places"][clubs[0]["name"]]
     places_to_purchase = 12 - int(places_already_purchase) + 1
-    if int(mock_clubs[0]["points"]) < places_to_purchase:
-        mock_clubs[0]["points"] = places_to_purchase
-    if int(mock_competitions[0]["number_of_places"]) < places_to_purchase:
-        mock_competitions[0]["number_of_places"] = places_to_purchase
+    if int(clubs[0]["points"]) < places_to_purchase:
+        clubs[0]["points"] = places_to_purchase
+    if int(competitions[0]["number_of_places"]) < places_to_purchase:
+        competitions[0]["number_of_places"] = places_to_purchase
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
         "places": places_to_purchase
     }
 
@@ -173,22 +173,22 @@ def test_no_booking_if_sum_places_form_and_club_places_over_12(client, mock_club
 
     assert response_purchase.status_code == 200
     assert expected_message in response_purchase.data.decode()
-    assert mock_competitions[0]["clubs_places"][mock_clubs[0]["name"]] == \
+    assert competitions[0]["clubs_places"][clubs[0]["name"]] == \
            places_already_purchase
 
 
-def test_no_booking_if_places_form_no_int(client, mock_clubs, mock_competitions):
+def test_no_booking_if_places_form_no_int(client, clubs, competitions):
     check_club_has_points_and_comp_has_places(
-        mock_clubs[0],
-        mock_competitions[0]
+        clubs[0],
+        competitions[0]
     )
-    check_competition_date_is_no_past(mock_competitions[0])
-    del_places_purchased_by_club_testing(mock_clubs[0], mock_competitions[0])
+    check_competition_date_is_no_past(competitions[0])
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
         "places": "a"
     }
 
@@ -203,18 +203,18 @@ def test_no_booking_if_places_form_no_int(client, mock_clubs, mock_competitions)
     assert expected_message in response_purchase.data.decode()
 
 
-def test_no_booking_if_places_form_empty(client, mock_clubs, mock_competitions):
+def test_no_booking_if_places_form_empty(client, clubs, competitions):
     check_club_has_points_and_comp_has_places(
-        mock_clubs[0],
-        mock_competitions[0]
+        clubs[0],
+        competitions[0]
     )
-    check_competition_date_is_no_past(mock_competitions[0])
-    del_places_purchased_by_club_testing(mock_clubs[0], mock_competitions[0])
+    check_competition_date_is_no_past(competitions[0])
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
         "places": ""
     }
 
@@ -229,18 +229,18 @@ def test_no_booking_if_places_form_empty(client, mock_clubs, mock_competitions):
     assert expected_message in response_purchase.data.decode()
 
 
-def test_no_booking_if_past_competition(client, mock_clubs, mock_competitions):
+def test_no_booking_if_past_competition(client, clubs, competitions):
     check_club_has_points_and_comp_has_places(
-        mock_clubs[0],
-        mock_competitions[0]
+        clubs[0],
+        competitions[0]
     )
-    del_places_purchased_by_club_testing(mock_clubs[0], mock_competitions[0])
-    mock_competitions[0]["date"] = "1900-01-01 01:00:00"
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
+    competitions[0]["date"] = "1900-01-01 01:00:00"
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
         "places": 1
     }
 
@@ -255,18 +255,18 @@ def test_no_booking_if_past_competition(client, mock_clubs, mock_competitions):
     assert expected_message in response_purchase.data.decode()
 
 
-def test_booking_places_message_confirmation(client, mock_clubs, mock_competitions):
+def test_booking_places_message_confirmation(client, clubs, competitions):
     check_club_has_points_and_comp_has_places(
-        mock_clubs[0],
-        mock_competitions[0]
+        clubs[0],
+        competitions[0]
     )
-    check_competition_date_is_no_past(mock_competitions[0])
+    check_competition_date_is_no_past(competitions[0])
 
     data_test = {
-        "email": mock_clubs[0]["email"],
-        "club": mock_clubs[0]["name"],
-        "competition": mock_competitions[0]["name"],
-        "places": determine_maximum_booking(mock_clubs[0], mock_competitions[0])
+        "email": clubs[0]["email"],
+        "club": clubs[0]["name"],
+        "competition": competitions[0]["name"],
+        "places": determine_maximum_booking(clubs[0], competitions[0])
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test)
