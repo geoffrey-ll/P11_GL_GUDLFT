@@ -1,5 +1,16 @@
+from unittest import mock
+
 from datetime import datetime, timedelta
+
 import server
+
+
+@mock.patch("server.FILENAME_CLUBS", "./tests/clubs_test.json")
+@mock.patch("server.FILENAME_COMPETITIONS", "./tests/competitions_test.json")
+def loading_database_test():
+    global clubs, competitions
+    clubs, competitions = server.load_database()
+    return clubs, competitions
 
 
 def determine_maximum_booking(club, competition):

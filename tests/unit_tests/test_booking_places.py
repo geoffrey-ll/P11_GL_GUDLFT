@@ -1,6 +1,6 @@
+# from unittest import mock
+
 import server
-
-
 from .utility_functions import (
     check_club_has_points_and_comp_has_places,
     check_competition_date_is_no_past,
@@ -9,7 +9,9 @@ from .utility_functions import (
 )
 
 
-def test_no_booking_if_points_club_is_zero(client, clubs, competitions):
+def test_no_booking_if_points_club_is_zero(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -37,7 +39,9 @@ def test_no_booking_if_points_club_is_zero(client, clubs, competitions):
     assert clubs[0]["name"] not in competitions[0]["clubs_places"]
 
 
-def test_no_booking_if_places_comp_is_zero(client, clubs, competitions):
+def test_no_booking_if_places_comp_is_zero(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -64,7 +68,9 @@ def test_no_booking_if_places_comp_is_zero(client, clubs, competitions):
     assert expected_message in response_purchase.data.decode()
 
 
-def test_no_booking_if_places_form_over_12(client, clubs, competitions):
+def test_no_booking_if_places_form_over_12(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_competition_date_is_no_past(competitions[0])
     if int(clubs[0]["points"]) < 13:
         clubs[0]["points"] = "13"
@@ -87,7 +93,9 @@ def test_no_booking_if_places_form_over_12(client, clubs, competitions):
     assert clubs[0]["name"] not in competitions[0]["clubs_places"]
 
 
-def test_no_booking_if_places_form_over_points_club(client, clubs, competitions):
+def test_no_booking_if_places_form_over_points_club(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -116,7 +124,9 @@ def test_no_booking_if_places_form_over_points_club(client, clubs, competitions)
     assert clubs[0]["name"] not in competitions[0]["clubs_places"]
 
 
-def test_no_booking_if_places_form_over_places_comp(client, clubs, competitions):
+def test_no_booking_if_places_form_over_places_comp(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -144,7 +154,9 @@ def test_no_booking_if_places_form_over_places_comp(client, clubs, competitions)
     assert expected_message in response_purchase.data.decode()
 
 
-def test_no_booking_if_sum_places_form_and_club_places_over_12(client, clubs, competitions):
+def test_no_booking_if_sum_places_form_and_club_places_over_12(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_competition_date_is_no_past(competitions[0])
     if clubs[0]["name"] not in competitions[0]["clubs_places"] \
             or int(competitions[0]["clubs_places"][clubs[0]["name"]]) > 12:
@@ -177,7 +189,9 @@ def test_no_booking_if_sum_places_form_and_club_places_over_12(client, clubs, co
            places_already_purchase
 
 
-def test_no_booking_if_places_form_no_int(client, clubs, competitions):
+def test_no_booking_if_places_form_no_int(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -203,7 +217,9 @@ def test_no_booking_if_places_form_no_int(client, clubs, competitions):
     assert expected_message in response_purchase.data.decode()
 
 
-def test_no_booking_if_places_form_empty(client, clubs, competitions):
+def test_no_booking_if_places_form_empty(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -229,7 +245,9 @@ def test_no_booking_if_places_form_empty(client, clubs, competitions):
     assert expected_message in response_purchase.data.decode()
 
 
-def test_no_booking_if_past_competition(client, clubs, competitions):
+def test_no_booking_if_past_competition(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -255,7 +273,9 @@ def test_no_booking_if_past_competition(client, clubs, competitions):
     assert expected_message in response_purchase.data.decode()
 
 
-def test_booking_places_message_confirmation(client, clubs, competitions):
+def test_booking_places_message_confirmation(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]

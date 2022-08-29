@@ -5,8 +5,17 @@ import json
 from flask import Flask, render_template, request, redirect, flash, url_for
 
 
-FILE_CLUBS = "clubs.json"
-FILE_COMPETITIONS = "competitions.json"
+# if __name__ == "__main__":
+#     FILENAME_CLUBS = "clubs.json"
+#     FILENAME_COMPETITIONS = "competitions.json"
+# else:
+#     FILE_CLUBS = "./tests/clubs_test.json"
+#     FILE_COMPETITIONS = "./tests/competitions_test.json"
+
+
+FILENAME_CLUBS = "clubs.json"
+FILENAME_COMPETITIONS = "competitions.json"
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 MESSAGE_ERROR_DISPLAY_BOOK_VIEW = "Something went wrong-please try again."
@@ -28,55 +37,53 @@ MESSAGE_INPUT_EMAIL_UNKNOWN = "Sorry, that email wasn't found."
 MESSAGE_INPUT_PLACES_EMPTY = "Indicate the number of places to book."
 
 
-DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
-
-
-def load_clubs():
-    print(f"\n\nfile\n{FILE_CLUBS}\n")
-    with open(FILE_CLUBS) as c:
-        list_of_clubs = json.load(c)["clubs"]
-        print(f"\n\nlist\n{list_of_clubs}\n")
-    c.close()
-    return list_of_clubs
-
-
-def load_competitions():
-    print(f"\n\nfile\n{FILE_COMPETITIONS}\n")
-    with open(FILE_COMPETITIONS) as comps:
-        list_of_competitions = json.load(comps)["competitions"]
-        print(f"\n\nliste\n{list_of_competitions}\n")
-    comps.close()
-    return list_of_competitions
-
-
 app = Flask(__name__)
 app.secret_key = "something_special"
-
-
-clubs = load_clubs()
-competitions = load_competitions()
 
 
 def today():
     return datetime.now().strftime(DATETIME_FORMAT)
 
 
+def load_clubs():
+    with open(FILENAME_CLUBS) as c:
+        list_of_clubs = json.load(c)["clubs"]
+    c.close()
+    return list_of_clubs
+
+
+def load_competitions():
+    with open(FILENAME_COMPETITIONS) as comps:
+        list_of_competitions = json.load(comps)["competitions"]
+    comps.close()
+    return list_of_competitions
+
+
+def load_database():
+    global clubs, competitions
+    clubs = load_clubs()
+    competitions = load_competitions()
+    return clubs, competitions
+
+
 def update_database():
-    with open(FILE_CLUBS, mode="w") as c:
+    with open(FILENAME_CLUBS, mode="w") as c:
         json.dump({"clubs": clubs}, c, indent=2)
     c.close()
-    with open(FILE_COMPETITIONS, mode="w") as comps:
+    with open(FILENAME_COMPETITIONS, mode="w") as comps:
         json.dump({"competitions": competitions}, comps, indent=2)
     comps.close()
 
 
 @app.route("/")
 def index():
+    load_database()
     return render_template("index.html")
 
 
 @app.route("/showSummary", methods=["POST"])
 def show_summary():
+    # Rajouter un try et un test pour request_email
     request_email = request.form["email"]
 
     try:
@@ -96,7 +103,9 @@ def show_summary():
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
+    # Try avec flash et error si found_club non trouvé
     found_club = [c for c in clubs if c["name"] == club][0]
+    # Try avec flash et error si found_competition non trouvé
     found_competition = [
         c for c in competitions if c["name"] == competition
     ][0]

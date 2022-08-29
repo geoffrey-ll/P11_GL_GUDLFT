@@ -1,7 +1,9 @@
 import server
 
 
-def test_login_with_unknown_email(client):
+def test_login_with_unknown_email(client, mock_filename_clubs, mock_filename_competitions):
+    server.load_database()
+
     data_test = {"email": "inexistant@email.com"}
 
     response_summary = client.post(
@@ -15,7 +17,9 @@ def test_login_with_unknown_email(client):
     assert expected_message in response_summary.data.decode()
 
 
-def test_login_with_empty_email(client):
+def test_login_with_empty_email(client, mock_filename_clubs, mock_filename_competitions):
+    server.load_database()
+
     data_test = {"email": ""}
 
     response_summary = client.post(
@@ -29,8 +33,10 @@ def test_login_with_empty_email(client):
     assert expected_message in response_summary.data.decode()
 
 
-def test_login_with_a_known_email(client, clubs):
-    data_test =  {"email": clubs[0]["email"]}
+def test_login_with_a_known_email(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
+    data_test = {"email": clubs[0]["email"]}
 
     response_summary = client.post("/showSummary", data=data_test)
     expected_message = data_test["email"]

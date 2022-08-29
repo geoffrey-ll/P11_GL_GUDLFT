@@ -1,6 +1,4 @@
 import server
-
-
 from .utility_functions import (
     check_club_has_points_and_comp_has_places,
     check_competition_date_is_no_past,
@@ -9,7 +7,9 @@ from .utility_functions import (
 )
 
 
-def test_correct_deduction_of_number_places_to_comp(client, clubs, competitions):
+def test_correct_deduction_of_number_places_to_comp(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
             clubs[0],
             competitions[0]
@@ -42,7 +42,9 @@ def test_correct_deduction_of_number_places_to_comp(client, clubs, competitions)
     )
 
 
-def test_correct_deduction_of_points_club(client, clubs, competitions):
+def test_correct_deduction_of_points_club(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -69,7 +71,10 @@ def test_correct_deduction_of_points_club(client, clubs, competitions):
     )
 
 
-def test_writing_places_purchases_by_club_if_zero_places_already(client, clubs, competitions):
+def test_writing_places_purchases_by_club_if_zero_places_already(
+        client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -95,7 +100,9 @@ def test_writing_places_purchases_by_club_if_zero_places_already(client, clubs, 
     )
 
 
-def test_update_places_purchase_by_clubs(client, clubs, competitions):
+def test_update_places_purchase_by_clubs(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -123,7 +130,9 @@ def test_update_places_purchase_by_clubs(client, clubs, competitions):
     )
 
 
-def test_not_update_places_purchase_if_over_12(client, clubs, competitions):
+def test_not_update_places_purchase_if_over_12(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
@@ -150,7 +159,9 @@ def test_not_update_places_purchase_if_over_12(client, clubs, competitions):
     assert competitions[0]["clubs_places"][clubs[0]["name"]] == "12"
 
 
-def test_writing_the_updated_data_in_clubs_json(client, clubs, competitions):
+def test_writing_the_updated_data_in_clubs_json(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]

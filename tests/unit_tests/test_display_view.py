@@ -5,7 +5,9 @@ from .utility_functions import (
 )
 
 
-def test_no_display_book_view_if_past_competition(client, clubs, competitions):
+def test_no_display_book_view_if_past_competition(client, mock_filename_clubs, mock_filename_competitions):
+    clubs, competitions = server.load_database()
+
     check_club_has_points_and_comp_has_places(
         clubs[0],
         competitions[0]
