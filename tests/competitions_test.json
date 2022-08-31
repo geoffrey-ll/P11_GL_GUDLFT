@@ -2,11 +2,11 @@
   "competitions": [
     {
       "name": "Test Festival",
-      "date": "2022-09-05 04:38:42",
-      "number_of_places": "0",
+      "date": "2021-11-06 08:00:00",
+      "number_of_places": "9",
       "clubs_places": {
-        "test club 03": "7",
-        "test club 01": "1"
+        "test club 01": "4",
+        "test club 03": "7"
       }
     },
     {

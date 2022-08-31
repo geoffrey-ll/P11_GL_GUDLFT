@@ -1,7 +1,15 @@
 import server
 
 
-def test_login_with_unknown_email(client, mock_filename_clubs, mock_filename_competitions):
+def test_no_login_if_form_email_nonexistent(client):
+    response_summary = client.post("/showSummary", follow_redirects=True)
+    expected_message = server.MESSAGE_INPUT_EMAIL_NONEXISTENT
+
+    assert response_summary.status_code == 200
+    assert expected_message in response_summary.data.decode()
+
+
+def test_no_login_unknown_email(client, mock_filename_clubs, mock_filename_competitions):
     server.load_database()
 
     data_test = {"email": "inexistant@email.com"}
@@ -17,7 +25,7 @@ def test_login_with_unknown_email(client, mock_filename_clubs, mock_filename_com
     assert expected_message in response_summary.data.decode()
 
 
-def test_login_with_empty_email(client, mock_filename_clubs, mock_filename_competitions):
+def test_no_login_if_empty_email(client, mock_filename_clubs, mock_filename_competitions):
     server.load_database()
 
     data_test = {"email": ""}
@@ -33,7 +41,7 @@ def test_login_with_empty_email(client, mock_filename_clubs, mock_filename_compe
     assert expected_message in response_summary.data.decode()
 
 
-def test_login_with_a_known_email(client, mock_filename_clubs, mock_filename_competitions):
+def test_login_if_a_known_email(client, mock_filename_clubs, mock_filename_competitions):
     clubs, competitions = server.load_database()
 
     data_test = {"email": clubs[0]["email"]}
