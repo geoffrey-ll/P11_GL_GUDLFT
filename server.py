@@ -1,8 +1,7 @@
+import pprint
 from datetime import datetime
-import json
-
-
 from flask import Flask, render_template, request, redirect, flash, url_for
+import json
 
 
 FILENAME_CLUBS = "clubs.json"
@@ -248,9 +247,21 @@ def purchase_places():
     return redirect(url_for("show_summary"), code=307)
 
 
-# TODO: Add route for points display
+# @app.route("/pointsBoard/", defaults={"club_name": m})
+@app.route("/pointsBoard/<club_name>")
+def points_board(club_name):
+    # Les paramètres de la def sont récupérés via l'URL de la route
+    # Je ne sais pas comment transmettre un paramètre à la def sans l'avoir dans l'URL
+    club_logged = [club for club in clubs if club_name in club["name"]][0]
+
+    return render_template(
+        "points_board.html",
+        club_logged=club_logged,
+        clubs=clubs,
+    )
 
 
 @app.route("/logout")
 def logout():
+
     return redirect(url_for("index"))

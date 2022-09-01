@@ -27,5 +27,12 @@
       <input type="number" name="places" id="" min="1" max="{{ maximum_booking }}"/>
       <button type="submit">Book</button>
     </form>
+
+    <form name="back" action="/showSummary" method="POST">
+      <input type="hidden" name="email" value="{{ club['email'] }}">
+      <button type="submit" style="padding: 0; background-color: transparent; border: none; text-decoration: underline #3391ff; color: #3391ff;">
+        Summary
+      </button>
+    </form>
   </body>
 </html>

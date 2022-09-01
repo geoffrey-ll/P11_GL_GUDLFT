@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Points board || GUDLFT</title>
+  </head>
+
+  <body>
+    <h2>Welcome, {{ club_logged["email"] }} </h2>
+    <a href="{{ url_for('logout') }}">Logout</a><br>
+    <form name="back" action="/showSummary" method="POST">
+      <input type="hidden" name="email" value="{{ club_logged['email'] }}">
+      <button type="submit" style="padding: 0; background-color: transparent; border: none; text-decoration: underline #3391ff; color: #3391ff">
+        Summary
+      </button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <h3>My club:</h3>
+    <ul>
+      <li>
+        {{ club_logged["name"] }}<br>
+        Points available: {{ club_logged["points"] }}
+      </li>
+    </ul>
+
+    <h3>Clubs:</h3>
+    <ul>
+      {% for club in clubs if club["name"] != club_logged["name"] %}
+        <li>
+          {{ club["name"] }}<br>
+          Points available: {{ club["points"] }}
+        </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

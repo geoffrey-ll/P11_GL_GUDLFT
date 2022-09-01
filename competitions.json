@@ -2,7 +2,7 @@
   "competitions": [
     {
       "name": "Spring Festival",
-      "date": "2020-03-27 10:00:00",
+      "date": "2023-03-27 10:00:00",
       "number_of_places": "25",
       "clubs_places": {
         "Simply Lift": "3",
@@ -11,8 +11,8 @@
     },
     {
       "name": "Fall Classic",
-      "date": "2020-10-22 13:30:00",
-      "number_of_places": "13",
+      "date": "2023-10-22 13:30:00",
+      "number_of_places": "0",
       "clubs_places": {
         "She Lifts": "5",
         "Simply Lift": "9"

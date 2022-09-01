@@ -2,7 +2,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summary | GUDLFT Registration</title>
+    <title>Summary || GUDLFT</title>
   </head>
 
   <body>
@@ -22,19 +22,17 @@
     <p>Points available: {{ club["points"] }}</p>
     <h3>Competitions:</h3>
     <ul>
-      {{ datetime }}
       {% for comp in competitions %}
         <li>
           {{ comp["name"] }}<br>
           Date: {{ comp["date"] }}<br>
           Number of Places: {{ comp["number_of_places"] }}
-          {% if comp["number_of_places"]|int > 0 %}
-            <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}">
-              Book Places
-            </a>
-          {% endif %}
+          <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}">
+            Book Places
+          </a>
         </li>
       {% endfor %}
     </ul>
+    <a href="{{ url_for('points_board', club_name=club['name']) }}">Points Board</a>
   </body>
 </html>
