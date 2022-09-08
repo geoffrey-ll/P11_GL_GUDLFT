@@ -4,7 +4,7 @@ from datetime import datetime
 import server
 
 
-def test_competition_datetime_format(mock_filename_competitions):
+def test_competition_datetime_format(mock_filename_clubs, mock_filename_competitions):
     clubs, competitions = server.load_database()
 
     try:

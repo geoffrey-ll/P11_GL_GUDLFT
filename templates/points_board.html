@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en">view.py .....F
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +7,8 @@
   </head>
 
   <body>
-    <h2>Welcome, {{ club_logged["email"] }} </h2>
-    <a href="{{ url_for('logout') }}">Logout</a><br>
-    <form name="back" action="/showSummary" method="POST">
-      <input type="hidden" name="email" value="{{ club_logged['email'] }}">
-      <button type="submit" style="padding: 0; background-color: transparent; border: none; text-decoration: underline #3391ff; color: #3391ff">
-        Summary
-      </button>
-    </form>
+    <h2>Welcome</h2>
+    <a href="{{ url_for('index') }}">Connexion</a><br>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -26,17 +20,9 @@
       {% endif %}
     {% endwith %}
 
-    <h3>My club:</h3>
-    <ul>
-      <li>
-        {{ club_logged["name"] }}<br>
-        Points available: {{ club_logged["points"] }}
-      </li>
-    </ul>
-
     <h3>Clubs:</h3>
     <ul>
-      {% for club in clubs if club["name"] != club_logged["name"] %}
+      {% for club in clubs if club["name"] %}
         <li>
           {{ club["name"] }}<br>
           Points available: {{ club["points"] }}

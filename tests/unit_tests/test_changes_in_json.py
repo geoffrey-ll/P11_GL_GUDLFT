@@ -6,8 +6,7 @@ from .utility_functions import (
     check_club_has_points_and_comp_has_places,
     check_competition_date_is_no_past,
     del_places_purchased_by_club_testing,
-    determine_maximum_booking,
-    reboot_json_tests,
+    reboot_json_tests
 )
 
 
@@ -24,7 +23,10 @@ def test_writing_the_updated_data_in_clubs_json(client, mock_filename_clubs, moc
         "email": clubs[0]["email"],
         "club": clubs[0]["name"],
         "competition": competitions[0]["name"],
-        "places": determine_maximum_booking(clubs[0], competitions[0])
+        "places": server.determine_maximum_booking(
+            clubs[0],
+            competitions[0]
+        )
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test)
@@ -49,7 +51,10 @@ def test_writing_the_updated_data_in_competitions_json(client, mock_filename_clu
         "email": clubs[0]["email"],
         "club": clubs[0]["name"],
         "competition": competitions[0]["name"],
-        "places": determine_maximum_booking(clubs[0], competitions[0])
+        "places": server.determine_maximum_booking(
+            clubs[0],
+            competitions[0]
+        )
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test)

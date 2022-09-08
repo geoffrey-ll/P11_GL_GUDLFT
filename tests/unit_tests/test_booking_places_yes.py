@@ -2,7 +2,6 @@ import server
 from .utility_functions import (
     check_club_has_points_and_comp_has_places,
     check_competition_date_is_no_past,
-    determine_maximum_booking,
     reboot_json_tests
 )
 
@@ -17,7 +16,10 @@ def test_booking_places_message_confirmation(client, mock_filename_clubs, mock_f
         "email": clubs[0]["email"],
         "club": clubs[0]["name"],
         "competition": competitions[0]["name"],
-        "places": determine_maximum_booking(clubs[0], competitions[0])
+        "places": server.determine_maximum_booking(
+            clubs[0],
+            competitions[0]
+        )
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test)
@@ -42,7 +44,10 @@ def test_correct_deduction_of_number_places_to_comp(client, mock_filename_clubs,
         "email": clubs[0]["email"],
         "club": clubs[0]["name"],
         "competition": competitions[0]["name"],
-        "places": determine_maximum_booking(clubs[0], competitions[0])
+        "places": server.determine_maximum_booking(
+            clubs[0],
+            competitions[0]
+        )
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test)
@@ -67,7 +72,10 @@ def test_correct_deduction_of_points_club(client, mock_filename_clubs, mock_file
         "email": clubs[0]["email"],
         "club": clubs[0]["name"],
         "competition": competitions[0]["name"],
-        "places": determine_maximum_booking(clubs[0], competitions[0])
+        "places": server.determine_maximum_booking(
+            clubs[0],
+            competitions[0]
+        )
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test)
@@ -75,7 +83,8 @@ def test_correct_deduction_of_points_club(client, mock_filename_clubs, mock_file
 
     assert response_purchase.status_code == 307
     assert points_of_clubs_final == (
-            points_of_clubs_initial - data_test["places"]
+            points_of_clubs_initial -
+            data_test["places"] * server.RATIO_POINTS_PLACE
     )
 
 
