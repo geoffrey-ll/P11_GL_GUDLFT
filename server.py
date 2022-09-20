@@ -104,12 +104,16 @@ def determine_maximum_booking(club_logged, competition_desired):
 
 @app.route("/")
 def index():
+    print("PASSE DANS INDEX")
+    # print(f"\n{type(url_for('index'))}\n")
+    # print(f"\n{type(url_for('show_summary'))}\n")
     load_database()
     return render_template("index.html")
 
 
 @app.route("/showSummary", methods=["POST"])
 def show_summary():
+    print("PASSE DANS SHOW_SUMMARY")
     try:
         request_email = request.form["email"]
     except KeyError:
@@ -118,6 +122,7 @@ def show_summary():
 
     try:
         club = [club for club in clubs if club["email"] == request_email][0]
+        print("CONNEXION BONNE")
         return render_template(
             "welcome.html",
             club=club,

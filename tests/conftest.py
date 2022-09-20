@@ -20,7 +20,7 @@ def mock_filename_clubs(mocker):
     yield mocked
 
 
-@pytest.fixture
+@pytest.fixtureFI
 def mock_filename_competitions(mocker):
     mocked = mocker.patch(
         "server.FILENAME_COMPETITIONS", FILENAME_COMPETITION_TEST)
