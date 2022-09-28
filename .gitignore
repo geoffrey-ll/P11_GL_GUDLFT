@@ -6,3 +6,4 @@ lib
 .envrc
 __pycache__
 message_for_commit.txt
+.env

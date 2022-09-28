@@ -2,6 +2,8 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for
 import json
 
+from decouple import config
+
 
 RATIO_POINTS_PLACE = 3
 MAX_BOOK_PER_COMP_BY_CLUB = 12
@@ -49,7 +51,7 @@ MESSAGE_INPUT_PLACES_NEGATIVE = "Enter a positive value."
 
 
 app = Flask(__name__)
-app.secret_key = "something_special"
+app.secret_key = config("SECRET_KEY")
 
 
 def today():
