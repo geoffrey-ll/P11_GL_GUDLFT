@@ -83,7 +83,7 @@ def update_database():
     with open(FILENAME_CLUBS, mode="w") as c:
         json.dump({"clubs": clubs}, c, indent=2)
     c.close()
-    # TODO: Ordonner les competitions["clubs_places"] par ordre alphabétique
+
     with open(FILENAME_COMPETITIONS, mode="w") as comps:
         json.dump({"competitions": competitions}, comps, indent=2)
     comps.close()
