@@ -1,12 +1,19 @@
+"""Tests des instructions dans les cas où la réservation d'une place de
+compétition doit aboutir.
+ """
+
 import server
-from .utility_functions import (
-    check_club_has_points_and_comp_has_places,
-    check_competition_date_is_no_past,
-    reboot_json_tests
-)
+from .utility_functions import (check_club_has_points_and_comp_has_places,
+                                check_competition_date_is_no_past,
+                                reboot_json_tests,)
 
 
-def test_booking_places_message_confirmation(client, mock_filename_clubs, mock_filename_competitions):
+def test_booking_places_message_confirmation(
+        client, mock_filename_clubs, mock_filename_competitions):
+    """Réservation possible :
+
+    Test le message confirmant la réservation.
+    """
     clubs, competitions = server.load_database()
 
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
@@ -16,10 +23,7 @@ def test_booking_places_message_confirmation(client, mock_filename_clubs, mock_f
         "email": clubs[0]["email"],
         "club": clubs[0]["name"],
         "competition": competitions[0]["name"],
-        "places": server.determine_maximum_booking(
-            clubs[0],
-            competitions[0]
-        )
+        "places": server.determine_maximum_booking(clubs[0], competitions[0])
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test)
@@ -33,7 +37,13 @@ def test_booking_places_message_confirmation(client, mock_filename_clubs, mock_f
     reboot_json_tests()
 
 
-def test_correct_deduction_of_number_places_to_comp(client, mock_filename_clubs, mock_filename_competitions):
+def test_correct_deduction_of_number_places_to_comp(
+        client, mock_filename_clubs, mock_filename_competitions):
+    """Réservation possible :
+
+    Test que la déduction du nombre de places restantes de la compétition
+    s'effectue correctement.
+    """
     clubs, competitions = server.load_database()
 
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
@@ -44,10 +54,7 @@ def test_correct_deduction_of_number_places_to_comp(client, mock_filename_clubs,
         "email": clubs[0]["email"],
         "club": clubs[0]["name"],
         "competition": competitions[0]["name"],
-        "places": server.determine_maximum_booking(
-            clubs[0],
-            competitions[0]
-        )
+        "places": server.determine_maximum_booking(clubs[0], competitions[0])
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test)
@@ -57,11 +64,16 @@ def test_correct_deduction_of_number_places_to_comp(client, mock_filename_clubs,
     assert response_purchase.status_code == 307
     assert response_summary.status_code == 200
     assert numbers_of_places_comp_final == (
-            numbers_of_places_comp_initial - data_test["places"]
-    )
+            numbers_of_places_comp_initial - data_test["places"])
 
 
-def test_correct_deduction_of_points_club(client, mock_filename_clubs, mock_filename_competitions):
+def test_correct_deduction_of_points_club(
+        client, mock_filename_clubs, mock_filename_competitions):
+    """Réservation possible :
+
+    Test que la déduction du nombre de points restants du club s'effectue
+    correctement.
+    """
     clubs, competitions = server.load_database()
 
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
@@ -72,10 +84,7 @@ def test_correct_deduction_of_points_club(client, mock_filename_clubs, mock_file
         "email": clubs[0]["email"],
         "club": clubs[0]["name"],
         "competition": competitions[0]["name"],
-        "places": server.determine_maximum_booking(
-            clubs[0],
-            competitions[0]
-        )
+        "places": server.determine_maximum_booking(clubs[0], competitions[0])
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test)
@@ -83,13 +92,23 @@ def test_correct_deduction_of_points_club(client, mock_filename_clubs, mock_file
 
     assert response_purchase.status_code == 307
     assert points_of_clubs_final == (
-            points_of_clubs_initial -
-            data_test["places"] * server.RATIO_POINTS_PLACE
+            points_of_clubs_initial
+            - data_test["places"] * server.RATIO_POINTS_PLACE
     )
 
 
 def test_add_places_purchases_by_club_if_zero_places_already(
         client, mock_filename_clubs, mock_filename_competitions):
+    """Réservation possible :
+
+    Cas où le club n'a aucune réservation de places pour la compétition.
+    Test que la réservation faite par le club est ajoutée aux données de la
+    compétition.
+
+    Nécessaire pour garder une trace du nombre de places réservées par le club
+    et éviter qu'il ne réserve plus que le maximum autorisé par
+    server.MAX_BOOK_PER_COMP_BY_CLUB.
+    """
     clubs, competitions = server.load_database()
 
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
@@ -110,11 +129,21 @@ def test_add_places_purchases_by_club_if_zero_places_already(
     assert response_purchase.status_code == 307
     assert response_summary.status_code == 200
     assert competitions[0]["clubs_places"][clubs[0]["name"]] == str(
-        data_test["places"]
-    )
+        data_test["places"])
 
 
-def test_update_places_purchase_by_clubs(client, mock_filename_clubs, mock_filename_competitions):
+def test_update_places_purchase_by_clubs(
+        client, mock_filename_clubs, mock_filename_competitions):
+    """Réservation possible :
+
+    Cas où le club a déjà réservé au moins une place pour la compétition.
+    Test que la réservation faite par le club est incrémentée aux données de la
+    compétition.
+
+    Nécessaire pour garder une trace du nombre de places réservées par le club
+    et éviter qu'il ne réserve plus que le maximum autorisé par
+    server.MAX_BOOK_PER_COMP_BY_CLUB.
+    """
     clubs, competitions = server.load_database()
 
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
@@ -137,5 +166,4 @@ def test_update_places_purchase_by_clubs(client, mock_filename_clubs, mock_filen
     assert response_purchase.status_code == 307
     assert response_summary.status_code == 200
     assert competitions[0]["clubs_places"][clubs[0]["name"]] == str(
-        int(value_club_places_initial_test) + data_test["places"]
-    )
+        int(value_club_places_initial_test) + data_test["places"])

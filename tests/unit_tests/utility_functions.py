@@ -1,5 +1,7 @@
-from unittest import mock
+"""Fonctions utiles pour les tests."""
+
 from datetime import datetime, timedelta
+from unittest import mock
 
 import server
 
@@ -45,6 +47,9 @@ test_competitions = [
 
 
 def check_club_has_points_and_comp_has_places(club, competition):
+    """Assure que le club et la compétition ont respectivement, assez de points
+     et de places pour permettre une réservation.
+     """
     if club["points"] < str(server.RATIO_POINTS_PLACE):
         club["points"] = str(server.RATIO_POINTS_PLACE)
     if competition["number_of_places"] == "0":
@@ -53,6 +58,7 @@ def check_club_has_points_and_comp_has_places(club, competition):
 
 
 def check_competition_date_is_no_past(competition):
+    """Assure que la date de la compétition n'est pas passée."""
     today = datetime.now().strftime(server.DATETIME_FORMAT)
     today_temp = datetime.strptime(today, server.DATETIME_FORMAT)
     date_comp = datetime.strptime(competition["date"], server.DATETIME_FORMAT)
@@ -62,6 +68,7 @@ def check_competition_date_is_no_past(competition):
 
 
 def del_places_purchased_by_club_testing(club, competition):
+    """Supprime les places déjà réservées par un club."""
     if club["name"] in competition["clubs_places"]:
         del competition["clubs_places"][club["name"]]
     return club, competition
@@ -70,4 +77,5 @@ def del_places_purchased_by_club_testing(club, competition):
 @mock.patch("server.clubs", test_clubs)
 @mock.patch("server.competitions", test_competitions)
 def reboot_json_tests():
+    """Écrit les json de test avec leurs valeurs initiales."""
     return server.update_database()
