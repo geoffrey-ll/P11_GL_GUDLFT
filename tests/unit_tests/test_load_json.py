@@ -1,7 +1,7 @@
 """Test du chargement des données."""
 
 import server
-from .utility_functions import test_clubs, test_competitions
+from tests.utility_functions import test_clubs, test_competitions
 
 
 def test_load_clubs_json(mock_filename_clubs, mock_filename_competitions):

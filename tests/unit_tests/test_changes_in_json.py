@@ -3,10 +3,10 @@
 import copy
 
 import server
-from .utility_functions import (check_club_has_points_and_comp_has_places,
-                                check_competition_date_is_no_past,
-                                del_places_purchased_by_club_testing,
-                                reboot_json_tests,)
+from tests.utility_functions import (check_club_has_points_and_comp_has_places,
+                                     check_competition_date_is_no_past,
+                                     del_places_purchased_by_club_testing,
+                                     reboot_json_tests, )
 
 
 def test_writing_the_updated_data_in_clubs_json(

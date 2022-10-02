@@ -167,7 +167,9 @@ def book(competition, club):
             flash(MESSAGE_ERROR_MAX_BOOKING_IS_NEGATIVE)
 
         errors = [comp_is_past, maxi_is_zero, maxi_is_nega]
+        count = 0
         for error in errors:
+            count+=1
             if error is True:
                 return render_template("welcome.html", club=found_club,
                                        competitions=competitions)
@@ -213,6 +215,7 @@ def purchase_places():
     over_points_club = False
     over_places_comp = False
     over_12_with_old = False
+    maxi_places_club = False
     nega_places_club = False
     if competition["date"] < today():
         comp_is_past = True
@@ -239,13 +242,16 @@ def purchase_places():
         over_places_comp = True
         flash(MESSAGE_NOT_ENOUGH_PLACES)
     if club["name"] in competition["clubs_places"]:
-        if int(competition["clubs_places"][club["name"]]) < 0:
+        already_booked = int(competition["clubs_places"][club["name"]])
+        if already_booked < 0:
             nega_places_club = True
             flash(MESSAGE_ERROR_DATA_CLUB_PLACES_NEGATIVE)
+        elif already_booked == 12:
+            maxi_places_club = True
+            flash(MESSAGE_NOT_BOOKING_POSSIBLE)
         else:
-            total_temp = (int(competition["clubs_places"][club["name"]])
-                          + places_required)
-            if total_temp > 12:
+            total_temp = already_booked + places_required
+            if already_booked == 12 or total_temp > 12:
                 over_12_with_old = True
                 flash(MESSAGE_ERROR_OVER_12_PLACES_BY_CLUB)
     else:
@@ -255,7 +261,7 @@ def purchase_places():
         places_form_empty, places_form_negative, places_form_err, comp_is_past,
         zero_points_club, nega_points_club, zero_places_comp, nega_places_comp,
         over_12_required, over_points_club, over_places_comp, over_12_with_old,
-        nega_places_club
+        maxi_places_club, nega_places_club
     ]
 
     for error in errors:

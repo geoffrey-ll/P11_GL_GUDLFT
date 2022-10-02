@@ -3,9 +3,10 @@ compétition doit aboutir.
  """
 
 import server
-from .utility_functions import (check_club_has_points_and_comp_has_places,
-                                check_competition_date_is_no_past,
-                                reboot_json_tests,)
+from tests.utility_functions import (check_club_has_points_and_comp_has_places,
+                                     check_competition_date_is_no_past,
+                                     del_places_purchased_by_club_testing,
+                                     reboot_json_tests, )
 
 
 def test_booking_places_message_confirmation(
@@ -18,6 +19,7 @@ def test_booking_places_message_confirmation(
 
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
     check_competition_date_is_no_past(competitions[0])
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
     data_test = {
         "email": clubs[0]["email"],
@@ -48,6 +50,7 @@ def test_correct_deduction_of_number_places_to_comp(
 
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
     check_competition_date_is_no_past(competitions[0])
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
     numbers_of_places_comp_initial = int(competitions[0]["number_of_places"])
 
     data_test = {
@@ -66,6 +69,8 @@ def test_correct_deduction_of_number_places_to_comp(
     assert numbers_of_places_comp_final == (
             numbers_of_places_comp_initial - data_test["places"])
 
+    reboot_json_tests()
+
 
 def test_correct_deduction_of_points_club(
         client, mock_filename_clubs, mock_filename_competitions):
@@ -78,6 +83,7 @@ def test_correct_deduction_of_points_club(
 
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
     check_competition_date_is_no_past(competitions[0])
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
     points_of_clubs_initial = int(clubs[0]["points"])
 
     data_test = {
@@ -96,6 +102,7 @@ def test_correct_deduction_of_points_club(
             - data_test["places"] * server.RATIO_POINTS_PLACE
     )
 
+    reboot_json_tests()
 
 def test_add_places_purchases_by_club_if_zero_places_already(
         client, mock_filename_clubs, mock_filename_competitions):
@@ -113,8 +120,7 @@ def test_add_places_purchases_by_club_if_zero_places_already(
 
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
     check_competition_date_is_no_past(competitions[0])
-    if clubs[0]["name"] in competitions[0]["clubs_places"]:
-        del competitions[0]["clubs_places"][clubs[0]["name"]]
+    del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
     data_test = {
         "email": clubs[0]["email"],
@@ -130,6 +136,8 @@ def test_add_places_purchases_by_club_if_zero_places_already(
     assert response_summary.status_code == 200
     assert competitions[0]["clubs_places"][clubs[0]["name"]] == str(
         data_test["places"])
+
+    reboot_json_tests()
 
 
 def test_update_places_purchase_by_clubs(
@@ -167,3 +175,5 @@ def test_update_places_purchase_by_clubs(
     assert response_summary.status_code == 200
     assert competitions[0]["clubs_places"][clubs[0]["name"]] == str(
         int(value_club_places_initial_test) + data_test["places"])
+
+    reboot_json_tests()

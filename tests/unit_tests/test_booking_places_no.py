@@ -3,9 +3,9 @@ pas aboutir.
 """
 
 import server
-from .utility_functions import (check_club_has_points_and_comp_has_places,
-                                check_competition_date_is_no_past,
-                                del_places_purchased_by_club_testing,)
+from tests.utility_functions import (check_club_has_points_and_comp_has_places,
+                                     check_competition_date_is_no_past,
+                                     del_places_purchased_by_club_testing, )
 
 
 def test_no_booking_if_points_club_is_less_than_ratio_points_place(

@@ -3,10 +3,10 @@
 import copy
 
 import server
-from .utility_functions import (check_club_has_points_and_comp_has_places,
-                                check_competition_date_is_no_past,
-                                del_places_purchased_by_club_testing,
-                                test_clubs, test_competitions,)
+from tests.utility_functions import (check_club_has_points_and_comp_has_places,
+                                     check_competition_date_is_no_past,
+                                     del_places_purchased_by_club_testing,
+                                     test_clubs, test_competitions, )
 
 
 def test_no_display_book_view_if_past_competition(
@@ -25,15 +25,8 @@ def test_no_display_book_view_if_past_competition(
     del_places_purchased_by_club_testing(clubs[0], competitions[0])
     competitions[0]["date"] = "1900-01-01 01:00:00"
 
-    data_test = {
-        "email": clubs[0]["email"],
-        "club": clubs[0]["name"],
-        "competition": competitions[0]["name"],
-        "places": 1
-    }
-
     response_book = client.get(
-        f"/book/{competitions[0]['name']}/{clubs[0]['name']}", data=data_test)
+        f"/book/{competitions[0]['name']}/{clubs[0]['name']}")
     expected_message = server.MESSAGE_ERROR_PAST_COMPETITION
 
     assert response_book.status_code == 200
@@ -127,16 +120,8 @@ def test_no_display_book_view_is_maximum_booking_is_zero(
     check_competition_date_is_no_past(competitions[0])
     del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
-    data_test = {
-        "email": clubs[0]["email"],
-        "club": clubs[0]["name"],
-        "competition": competitions[0]["name"],
-        "places": server.determine_maximum_booking(clubs[0], competitions[0])
-    }
-
     response_book = client.get(
-        f"/book/{competitions[0]['name']}/{clubs[0]['name']}", data=data_test,
-        follow_redirects=True)
+        f"/book/{competitions[0]['name']}/{clubs[0]['name']}")
     expected_message = server.MESSAGE_NOT_BOOKING_POSSIBLE
 
     assert response_book.status_code == 200
@@ -160,16 +145,8 @@ def test_no_display_book_view_is_maximum_booking_is_negative(
     check_competition_date_is_no_past(competitions[0])
     del_places_purchased_by_club_testing(clubs[0], competitions[0])
 
-    data_test ={
-        "email": clubs[0]["email"],
-        "club": clubs[0]["name"],
-        "competition": competitions[0]["name"],
-        "places": server.determine_maximum_booking(clubs[0], competitions[0])
-    }
-
     response_book = client.get(
-        f"/book/{competitions[0]['name']}/{clubs[0]['name']}", data=data_test,
-        follow_redirects=True)
+        f"/book/{competitions[0]['name']}/{clubs[0]['name']}")
     expected_message = server.MESSAGE_ERROR_MAX_BOOKING_IS_NEGATIVE
 
     assert response_book.status_code == 200
@@ -183,7 +160,7 @@ def test_display_current_points_balance_clubs_in_points_board_view(
     """
     clubs, competitions = server.load_database()
 
-    response_points_board = client.get(f"/pointsBoard", follow_redirects=True)
+    response_points_board = client.get(f"/pointsBoard")
     expected_values_names = [club["name"] for club in clubs]
     expected_values_points = [club["points"] for club in clubs]
 
