@@ -301,13 +301,13 @@ def test_no_booking_if_sum_places_form_and_club_places_over_max_places_per_comp_
     check_club_has_points_and_comp_has_places(clubs[0], competitions[0])
     check_competition_date_is_no_past(competitions[0])
     competitions[0]["clubs_places"][clubs[0]["name"]] = \
-        server.MAX_BOOK_PER_COMP_BY_CLUB
+        int(server.MAX_BOOK_PER_COMP_BY_CLUB) - 1
 
     data_test = {
         "email": clubs[0]["email"],
         "club": clubs[0]["name"],
         "competition": competitions[0]["name"],
-        "places": 1
+        "places": 2
     }
 
     response_purchase = client.post("/purchasePlaces", data=data_test,
@@ -317,7 +317,7 @@ def test_no_booking_if_sum_places_form_and_club_places_over_max_places_per_comp_
     assert response_purchase.status_code == 200
     assert expected_message in response_purchase.data.decode()
     assert competitions[0]["clubs_places"][clubs[0]["name"]] == \
-        server.MAX_BOOK_PER_COMP_BY_CLUB
+        int(server.MAX_BOOK_PER_COMP_BY_CLUB) - 1
 
 
 def test_no_booking_if_places_form_no_int(

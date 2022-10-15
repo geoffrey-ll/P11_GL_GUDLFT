@@ -246,12 +246,12 @@ def purchase_places():
         if already_booked < 0:
             nega_places_club = True
             flash(MESSAGE_ERROR_DATA_CLUB_PLACES_NEGATIVE)
-        elif already_booked == 12:
+        elif already_booked == MAX_BOOK_PER_COMP_BY_CLUB:
             maxi_places_club = True
             flash(MESSAGE_NOT_BOOKING_POSSIBLE)
         else:
             total_temp = already_booked + places_required
-            if already_booked == 12 or total_temp > 12:
+            if total_temp > 12:
                 over_12_with_old = True
                 flash(MESSAGE_ERROR_OVER_12_PLACES_BY_CLUB)
     else:
